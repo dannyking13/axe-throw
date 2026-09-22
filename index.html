@@ -82,7 +82,7 @@
     })();
     // --- ROBUST FULLSCREEN OVERRIDE END ---
 
-    window.GameSnacks.game.firstFrameReady();
+    window.GameDriver.game.firstFrameReady();
 
     createUnityInstance(document.querySelector("#unity-canvas"), {
       arguments: [],
@@ -90,8 +90,8 @@
       frameworkUrl: "Build/Build.framework.js.unityweb",
       codeUrl: "Build/Build.wasm.unityweb",
       streamingAssetsUrl: "StreamingAssets",
-      companyName: "HypperRabbit Games",
-      productName: "Axe Throw",
+      companyName: "",
+      productName: "",
       productVersion: "0.1.40",
       // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
       // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.

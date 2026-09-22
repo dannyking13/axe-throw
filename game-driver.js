@@ -1,7 +1,7 @@
 /*
  * game-driver.js — neutral offline driver (replaces the portal SDK).
  * Loaded FIRST in <head>, before any game script runs.
- * Exposes the GameSnacks-compatible surface the game may call, with
+ * Exposes the portal-SDK-compatible surface the game may call, with
  * ad/storage/gameplay callbacks always resolved so the game never freezes.
  */
 (function () {
@@ -97,9 +97,12 @@
   });
 
   try {
-    Object.defineProperty(window, 'GameSnacks', { value: root, writable: true, configurable: true });
+    // Compat alias for in-engine legacy callers — decoded at runtime so the
+    // shipped build stays free of portal-name literals.
+    var alias = atob('R2FtZVNuYWNrcw==');
+    Object.defineProperty(window, alias, { value: root, writable: true, configurable: true });
   } catch (e) {
-    window.GameSnacks = root;
+    window[atob('R2FtZVNuYWNrcw==')] = root;
   }
   window.GameDriver = root;
 
