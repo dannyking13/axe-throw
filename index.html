@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport"
+    content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes, viewport-fit=cover">
+  <title>Axe Throw</title>
+  <script src="game-driver.js"></script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #1F1F20;
+    }
+
+    #unity-canvas {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #1F1F20;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="unity-canvas" width=1080 height=1920 tabindex="-1"></canvas>
+  <script src="Build/Build.loader.js"></script>
+  <script>
+    // --- ROBUST FULLSCREEN OVERRIDE START ---
+    // Place this script BEFORE your Unity loader script in your index.html
+
+    (function overrideFullscreenAPI() {
+      // 1. Create a dummy function that returns a resolved Promise
+      const blockFullscreen = function () {
+        console.warn("Unity requested fullscreen, but it was intercepted and blocked.");
+        return Promise.resolve();
+      };
+
+      // 2. Override the methods on the global Element prototype.
+      // This catches calls made on the canvas, wrapper divs, or the document root.
+      if (typeof Element !== 'undefined') {
+        Element.prototype.requestFullscreen = blockFullscreen;
+        Element.prototype.webkitRequestFullscreen = blockFullscreen;
+        Element.prototype.mozRequestFullScreen = blockFullscreen; // Firefox
+        Element.prototype.msRequestFullscreen = blockFullscreen;  // IE/Edge
+      }
+
+      // 3. (Optional but recommended) Spoof document-level fullscreen properties 
+      // to trick Unity into thinking fullscreen is not supported or inactive.
+      const defineFalseGetter = (prop) => {
+        if (prop in document) {
+          Object.defineProperty(document, prop, { get: () => false, configurable: true });
+        }
+      };
+
+      const defineNullGetter = (prop) => {
+        if (prop in document) {
+          Object.defineProperty(document, prop, { get: () => null, configurable: true });
+        }
+      };
+
+      // Tell the engine fullscreen isn't enabled/supported
+      defineFalseGetter('fullscreenEnabled');
+      defineFalseGetter('webkitFullscreenEnabled');
+      defineFalseGetter('mozFullScreenEnabled');
+
+      // Tell the engine no element is currently in fullscreen
+      defineNullGetter('fullscreenElement');
+      defineNullGetter('webkitFullscreenElement');
+      defineNullGetter('mozFullScreenElement');
+
+    })();
+    // --- ROBUST FULLSCREEN OVERRIDE END ---
+
+    window.GameSnacks.game.firstFrameReady();
+
+    createUnityInstance(document.querySelector("#unity-canvas"), {
+      arguments: [],
+      dataUrl: "Build/Build.data.unityweb",
+      frameworkUrl: "Build/Build.framework.js.unityweb",
+      codeUrl: "Build/Build.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "HypperRabbit Games",
+      productName: "Axe Throw",
+      productVersion: "0.1.40",
+      // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+      // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+    }).then((unityInstance) => {
+    }).catch((message) => {
+      alert(message);
+    });
+  </script>
+</body>
+
+</html>
